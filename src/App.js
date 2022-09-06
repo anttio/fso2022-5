@@ -66,6 +66,20 @@ const App = () => {
     } catch (exception) {}
   };
 
+  const updateBlog = async (blogObject) => {
+    try {
+      const updatedBlog = await blogService.update(blogObject);
+      setBlogs(
+        blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
+      );
+    } catch (exception) {
+      setNotificationMessage({
+        message: exception.response.data.error,
+        type: 'error',
+      });
+    }
+  };
+
   const handleNotificationMessage = ({ message, type }) => {
     if (message === null) {
       return false;
@@ -125,7 +139,7 @@ const App = () => {
       </Togglable>
       <div>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
         ))}
       </div>
     </div>

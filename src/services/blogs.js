@@ -19,5 +19,23 @@ const create = async (newObject) => {
   return res.data;
 };
 
+const update = async (blogObject) => {
+  const updateBlogObject = {
+    ...blogObject,
+    user: blogObject.user.id,
+  };
+
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const res = await axios.put(
+    `${baseUrl}/${updateBlogObject.id}`,
+    updateBlogObject,
+    config
+  );
+  return res.data;
+};
+
 // eslint-disable-next-line
-export default { setToken, getAll, create };
+export default { setToken, getAll, create, update };
