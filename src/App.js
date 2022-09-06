@@ -83,6 +83,13 @@ const App = () => {
     }
   };
 
+  const removeBlog = async (id) => {
+    try {
+      await blogService.remove(id);
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+    } catch (exception) {}
+  };
+
   const handleNotificationMessage = ({ message, type }) => {
     if (message === null) {
       return false;
@@ -142,7 +149,13 @@ const App = () => {
       </Togglable>
       <div>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            removeBlog={removeBlog}
+            allowRemove={blog.user && blog.user.username === user.username}
+          />
         ))}
       </div>
     </div>

@@ -37,5 +37,13 @@ const update = async (blogObject) => {
   return res.data;
 };
 
+const remove = (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  return axios.delete(`${baseUrl}/${id}`, config);
+};
+
 // eslint-disable-next-line
-export default { setToken, getAll, create, update };
+export default { setToken, getAll, create, update, remove };
