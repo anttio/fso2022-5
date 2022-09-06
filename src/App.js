@@ -11,7 +11,7 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
-  const [notificationMessage, setNotificationMessage] = useState({});
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -66,7 +66,9 @@ const App = () => {
         message: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
         type: 'success',
       });
-    } catch (exception) {}
+    } catch (exception) {
+      // TODO:
+    }
   };
 
   const updateBlog = async (blogObject) => {
@@ -76,7 +78,7 @@ const App = () => {
         blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
       );
     } catch (exception) {
-      setNotificationMessage({
+      handleNotificationMessage({
         message: exception.response.data.error,
         type: 'error',
       });
@@ -104,10 +106,12 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
-        <Notification
-          message={notificationMessage.message}
-          type={notificationMessage.type}
-        />
+        {notificationMessage && (
+          <Notification
+            message={notificationMessage.message}
+            type={notificationMessage.type}
+          />
+        )}
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -136,10 +140,12 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification
-        message={notificationMessage.message}
-        type={notificationMessage.type}
-      />
+      {notificationMessage && (
+        <Notification
+          message={notificationMessage.message}
+          type={notificationMessage.type}
+        />
+      )}
       <div>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
