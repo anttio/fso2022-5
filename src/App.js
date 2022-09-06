@@ -1,41 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
+import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
-
-const Notification = ({ message, type }) => {
-  if (!message) {
-    return null;
-  }
-
-  const baseStyles = {
-    background: 'lightgrey',
-    fontSize: '20px',
-    borderStyle: 'solid',
-    borderRadius: '5px',
-    padding: '10px',
-    marginBottom: '10px',
-  };
-
-  const successStyles = {
-    color: 'green',
-  };
-
-  const errorStyles = {
-    color: 'red',
-  };
-
-  const styles = () => {
-    if (type === 'error') {
-      return { ...baseStyles, ...errorStyles };
-    }
-    return { ...baseStyles, ...successStyles };
-  };
-
-  return <div style={styles()}>{message}</div>;
-};
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -43,6 +12,8 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [notificationMessage, setNotificationMessage] = useState({});
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -84,6 +55,7 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility();
       const createdBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(createdBlog));
 
@@ -148,7 +120,7 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </div>
-      <Togglable buttonLabel="new blog">
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <div>
