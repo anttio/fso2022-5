@@ -29,7 +29,7 @@ const Blog = ({ blog, updateBlog, removeBlog, allowRemove }) => {
           {detailsVisible ? 'hide' : 'view'}
         </button>
       </div>
-      <div style={showBlogDetails}>
+      <div style={showBlogDetails} className="blog-details">
         {blog.url && <div className="blog-url">{blog.url}</div>}
         <div>
           {blog.likes && <span className="blog-likes">{blog.likes}</span>}
