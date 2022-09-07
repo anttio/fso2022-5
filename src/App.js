@@ -45,7 +45,7 @@ const App = () => {
       setPassword('');
     } catch (exception) {
       handleNotificationMessage({
-        message: `wrong username or password`,
+        message: 'wrong username or password',
         type: 'error',
       });
     }
@@ -89,7 +89,9 @@ const App = () => {
     try {
       await blogService.remove(id);
       setBlogs(blogs.filter((blog) => blog.id !== id));
-    } catch (exception) {}
+    } catch (exception) {
+      console.log(exception);
+    }
   };
 
   const handleNotificationMessage = ({ message, type }) => {
