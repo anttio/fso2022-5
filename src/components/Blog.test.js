@@ -39,7 +39,23 @@ test('blog details are shown after clicking view button', async () => {
   await user.click(button);
 
   const div = container.querySelector('.blog-details');
-  screen.debug(div);
-
   expect(div).not.toHaveStyle('display: none');
+});
+
+test('like button is clicked twice', async () => {
+  const blog = {
+    title: 'Component testing is done with react-testing-library',
+    author: 'Author McAuthorface',
+  };
+
+  const mockHandler = jest.fn();
+
+  render(<Blog blog={blog} updateBlog={mockHandler} />);
+
+  const user = userEvent.setup();
+  const button = screen.getByText('like');
+  await user.click(button);
+  await user.click(button);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
 });
