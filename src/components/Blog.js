@@ -30,9 +30,9 @@ const Blog = ({ blog, updateBlog, removeBlog, allowRemove }) => {
         </button>
       </div>
       <div style={showBlogDetails}>
-        <div>{blog.url}</div>
+        {blog.url && <div className="blog-url">{blog.url}</div>}
         <div>
-          {blog.likes}
+          {blog.likes && <span className="blog-likes">{blog.likes}</span>}
           <button onClick={handleLike}>like</button>
         </div>
         <div>{blog.author}</div>
