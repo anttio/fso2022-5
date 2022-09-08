@@ -69,6 +69,12 @@ describe('Blog app', function () {
         cy.contains('like').click();
         cy.get('.blog-likes').should('contain', '1');
       });
+
+      it('it can be deleted by the creator', function () {
+        cy.contains('view').click();
+        cy.contains('remove').click();
+        cy.get('html').should('not.contain', 'this is just a blog test');
+      });
     });
   });
 });
