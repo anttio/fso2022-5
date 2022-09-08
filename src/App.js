@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
+import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [notificationMessage, setNotificationMessage] = useState(null);
@@ -31,18 +30,14 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (loginObject) => {
     try {
       const user = await loginService.login({
-        username,
-        password,
+        username: loginObject.username,
+        password: loginObject.password,
       });
-
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
       setUser(user);
-      setUsername('');
-      setPassword('');
     } catch (exception) {
       handleNotificationMessage({
         message: 'wrong username or password',
@@ -106,36 +101,10 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
-        <h2>log in to application</h2>
-        {notificationMessage && (
-          <Notification
-            message={notificationMessage.message}
-            type={notificationMessage.type}
-          />
-        )}
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
+      <LoginForm
+        login={handleLogin}
+        notificationMessage={notificationMessage}
+      />
     );
   }
 

@@ -29,7 +29,11 @@ const Notification = ({ message, type }) => {
     return { ...baseStyles, ...successStyles };
   };
 
-  return <div style={styles()}>{message}</div>;
+  return (
+    <div className="notification" style={styles()}>
+      {message}
+    </div>
+  );
 };
 
 Notification.propTypes = {
