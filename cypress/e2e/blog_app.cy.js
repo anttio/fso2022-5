@@ -10,6 +10,7 @@ describe('Blog app', function () {
       password: 'notgoingtotell',
     };
     cy.request('POST', 'http://localhost:3003/api/users', user);
+
     cy.visit('http://localhost:3000');
   });
 
@@ -74,6 +75,35 @@ describe('Blog app', function () {
         cy.contains('view').click();
         cy.contains('remove').click();
         cy.get('html').should('not.contain', 'this is just a blog test');
+      });
+    });
+
+    describe('and several blogs exist', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'blog test 1',
+          author: 'blog author 1',
+          url: 'blog url 1',
+        });
+        cy.createBlog({
+          title: 'blog test 2',
+          author: 'blog author 2',
+          url: 'blog url 2',
+        });
+        cy.createBlog({
+          title: 'blog test 3',
+          author: 'blog author 3',
+          url: 'blog url 3',
+        });
+      });
+
+      it('they are sorted by likes', function () {
+        cy.visit('http://localhost:3000');
+        cy.get('.blog').eq(0).contains('blog test 1');
+        cy.get('.blog').eq(1).contains('view').click();
+        cy.get('.blog').eq(1).contains('like').click();
+        cy.visit('http://localhost:3000');
+        cy.get('.blog').eq(0).contains('blog test 2');
       });
     });
   });

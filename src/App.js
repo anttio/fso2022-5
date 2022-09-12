@@ -62,7 +62,7 @@ const App = () => {
         type: 'success',
       });
     } catch (exception) {
-      // TODO:
+      console.log(exception);
     }
   };
 

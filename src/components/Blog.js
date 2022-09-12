@@ -22,7 +22,7 @@ const Blog = ({ blog, updateBlog, removeBlog, allowRemove }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <div>
         <span id="blog-title">{blog.title}</span>
         <button onClick={() => setDetailsVisible(!detailsVisible)}>
