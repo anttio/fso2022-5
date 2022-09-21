@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { setNotification } from '../reducers/notificationReducer';
 
 const BlogForm = ({ createBlog }) => {
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -9,6 +13,7 @@ const BlogForm = ({ createBlog }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     createBlog({ title, author, url });
+    dispatch(setNotification({ message: title, severity: 'success' }));
   };
 
   return (

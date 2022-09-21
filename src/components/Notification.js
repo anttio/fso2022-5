@@ -1,9 +1,15 @@
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { clearNotification } from '../reducers/notificationReducer';
 
-const Notification = ({ message, type }) => {
-  if (!message) {
-    return null;
-  }
+let timeoutId;
+
+const Notification = () => {
+  const dispatch = useDispatch();
+  const notification = useSelector((state) => state.notification);
+
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(() => dispatch(clearNotification()), 5000);
 
   const baseStyles = {
     background: 'lightgrey',
@@ -23,16 +29,18 @@ const Notification = ({ message, type }) => {
   };
 
   const styles = () => {
-    if (type === 'error') {
+    if (notification.severity === 'error') {
       return { ...baseStyles, ...errorStyles };
     }
     return { ...baseStyles, ...successStyles };
   };
 
   return (
-    <div className="notification" style={styles()}>
-      {message}
-    </div>
+    notification && (
+      <div className="notification" style={styles()}>
+        {notification.message}
+      </div>
+    )
   );
 };
 

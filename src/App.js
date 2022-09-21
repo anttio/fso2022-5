@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import { setNotification } from './reducers/notificationReducer';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
-  const [notificationMessage, setNotificationMessage] = useState(null);
 
   const blogFormRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -39,10 +41,12 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
       setUser(user);
     } catch (exception) {
-      handleNotificationMessage({
-        message: 'wrong username or password',
-        type: 'error',
-      });
+      dispatch(
+        setNotification({
+          message: 'wrong username or password',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -57,10 +61,12 @@ const App = () => {
       const createdBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(createdBlog));
 
-      handleNotificationMessage({
-        message: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
-        type: 'success',
-      });
+      dispatch(
+        setNotification({
+          message: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
+          severity: 'success',
+        })
+      );
     } catch (exception) {
       console.log(exception);
     }
@@ -73,10 +79,12 @@ const App = () => {
         blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
       );
     } catch (exception) {
-      handleNotificationMessage({
-        message: exception.response.data.error,
-        type: 'error',
-      });
+      dispatch(
+        setNotification({
+          message: exception.response.data.error,
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -89,34 +97,14 @@ const App = () => {
     }
   };
 
-  const handleNotificationMessage = ({ message, type }) => {
-    if (message === null) {
-      return false;
-    }
-    setNotificationMessage({ message, type });
-    setTimeout(() => {
-      setNotificationMessage('');
-    }, 5000);
-  };
-
   if (user === null) {
-    return (
-      <LoginForm
-        login={handleLogin}
-        notificationMessage={notificationMessage}
-      />
-    );
+    return <LoginForm login={handleLogin} />;
   }
 
   return (
     <div>
       <h2>blogs</h2>
-      {notificationMessage && (
-        <Notification
-          message={notificationMessage.message}
-          type={notificationMessage.type}
-        />
-      )}
+      <Notification />
       <div>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
