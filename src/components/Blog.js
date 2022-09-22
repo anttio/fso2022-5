@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { removeBlog, updateBlog } from '../reducers/blogReducer';
 
-const Blog = ({ blog, updateBlog, removeBlog, allowRemove }) => {
+const Blog = ({ blog, allowRemove }) => {
+  const dispatch = useDispatch();
+
   const [detailsVisible, setDetailsVisible] = useState(false);
   const [removeButtonVisible] = useState(allowRemove);
 
   const showBlogDetails = { display: detailsVisible ? '' : 'none' };
 
   const handleLike = () => {
-    updateBlog({
-      ...blog,
-      likes: (blog.likes += 1),
-    });
+    dispatch(
+      updateBlog({
+        ...blog,
+        likes: blog.likes + 1,
+      })
+    );
   };
 
   const handleRemove = () => {
     const confirmMessage = `Remove blog ${blog.title} by ${blog.author}`;
     if (window.confirm(confirmMessage)) {
-      removeBlog(blog.id);
+      dispatch(removeBlog(blog.id));
     }
   };
 

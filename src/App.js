@@ -1,27 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
+import BlogList from './components/BlogList';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import { initializeBlogs } from './reducers/blogReducer';
 import { setNotification } from './reducers/notificationReducer';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
-
   const blogFormRef = useRef();
   const dispatch = useDispatch();
 
+  const [user, setUser] = useState(null);
+
+  // Initialize blog list
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(sortedBlogs);
-    });
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -55,48 +53,6 @@ const App = () => {
     setUser(null);
   };
 
-  const addBlog = async (blogObject) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-      const createdBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(createdBlog));
-
-      dispatch(
-        setNotification({
-          message: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
-          severity: 'success',
-        })
-      );
-    } catch (exception) {
-      console.log(exception);
-    }
-  };
-
-  const updateBlog = async (blogObject) => {
-    try {
-      const updatedBlog = await blogService.update(blogObject);
-      setBlogs(
-        blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
-      );
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          message: exception.response.data.error,
-          severity: 'error',
-        })
-      );
-    }
-  };
-
-  const removeBlog = async (id) => {
-    try {
-      await blogService.remove(id);
-      setBlogs(blogs.filter((blog) => blog.id !== id));
-    } catch (exception) {
-      console.log(exception);
-    }
-  };
-
   if (user === null) {
     return <LoginForm login={handleLogin} />;
   }
@@ -110,19 +66,9 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </div>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
+        <BlogForm togglableRef={blogFormRef} />
       </Togglable>
-      <div>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateBlog={updateBlog}
-            removeBlog={removeBlog}
-            allowRemove={blog.user && blog.user.username === user.username}
-          />
-        ))}
-      </div>
+      <BlogList />
     </div>
   );
 };

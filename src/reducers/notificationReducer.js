@@ -11,7 +11,7 @@ const notificationSlice = createSlice({
       };
     },
     clearNotification() {
-      return null;
+      return { message: null, severity: null };
     },
   },
 });

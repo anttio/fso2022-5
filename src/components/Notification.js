@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { clearNotification } from '../reducers/notificationReducer';
 
 let timeoutId;
@@ -36,17 +35,12 @@ const Notification = () => {
   };
 
   return (
-    notification && (
+    notification.message && (
       <div className="notification" style={styles()}>
         {notification.message}
       </div>
     )
   );
-};
-
-Notification.propTypes = {
-  message: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
 };
 
 export default Notification;
