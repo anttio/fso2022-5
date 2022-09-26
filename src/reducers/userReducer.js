@@ -1,30 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { setNotification } from './notificationReducer';
-import loginService from '../services/login';
+import blogService from '../services/blogs';
+import userService from '../services/users';
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: null,
+  initialState: {
+    loggedInUser: null,
+    users: [],
+  },
   reducers: {
-    getUserReducer(state) {
-      return state;
+    initializeUsersReducer(state, action) {
+      return { ...state, users: state.users.concat(action.payload) };
     },
     setUserReducer(state, action) {
-      return action.payload;
+      return { ...state, loggedInUser: action.payload };
     },
   },
 });
 
-export const { getUserRedcuer, setUserReducer } = userSlice.actions;
+export const { initializeUsersReducer, setUserReducer } = userSlice.actions;
 
-export const getUser = () => {
+export const initializeUsers = () => {
   return async (dispatch) => {
     try {
-      const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-      if (loggedUserJSON) {
-        const loggedUser = JSON.parse(loggedUserJSON);
-        dispatch(setUserReducer(loggedUser));
-      }
+      const users = await userService.getAll();
+      dispatch(initializeUsersReducer(users));
     } catch (exception) {
       console.log(exception);
     }
@@ -34,7 +35,7 @@ export const getUser = () => {
 export const loginUser = ({ username, password }) => {
   return async (dispatch) => {
     try {
-      const user = await loginService.login({
+      const user = await userService.login({
         username,
         password,
       });
@@ -56,6 +57,21 @@ export const logoutUser = () => {
     try {
       window.localStorage.removeItem('loggedBlogappUser');
       dispatch(setUserReducer(null));
+    } catch (exception) {
+      console.log(exception);
+    }
+  };
+};
+
+export const getLoggedInUser = () => {
+  return async (dispatch) => {
+    try {
+      const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+      if (loggedUserJSON) {
+        const loggedUser = JSON.parse(loggedUserJSON);
+        dispatch(setUserReducer(loggedUser));
+        blogService.setToken(loggedUser.token);
+      }
     } catch (exception) {
       console.log(exception);
     }

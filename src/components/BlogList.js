@@ -6,7 +6,7 @@ const BlogList = () => {
     [...blogs].sort((a, b) => b.likes - a.likes)
   );
 
-  const user = useSelector(({ user }) => user);
+  const user = useSelector(({ user }) => user.loggedInUser);
 
   return (
     <div>

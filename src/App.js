@@ -5,8 +5,13 @@ import BlogList from './components/BlogList';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import UserList from './components/UserList';
 import { initializeBlogs } from './reducers/blogReducer';
-import { getUser, logoutUser } from './reducers/userReducer';
+import {
+  getLoggedInUser,
+  initializeUsers,
+  logoutUser,
+} from './reducers/userReducer';
 
 const App = () => {
   const blogFormRef = useRef();
@@ -19,12 +24,13 @@ const App = () => {
     dispatch(initializeBlogs());
   }, [dispatch]);
 
-  // Check if user is logged in
+  // Initialize users
   useEffect(() => {
-    dispatch(getUser());
+    dispatch(getLoggedInUser());
+    dispatch(initializeUsers());
   }, [dispatch]);
 
-  if (user === null) {
+  if (user.loggedInUser === null) {
     return <LoginForm />;
   }
 
@@ -33,9 +39,10 @@ const App = () => {
       <h2>blogs</h2>
       <Notification />
       <div>
-        {user.name} logged in
+        <p>{user.loggedInUser.name} logged in</p>
         <button onClick={() => dispatch(logoutUser())}>logout</button>
       </div>
+      <UserList />
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm togglableRef={blogFormRef} />
       </Togglable>
